@@ -1,0 +1,41 @@
+<meta charset="utf-8">
+<title>Test Suite</title>
+<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.20.0.css">
+
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="https://code.jquery.com/qunit/qunit-2.20.0.js"></script>
+  <script src="js-drum-machine.js"></script>
+
+  <script>
+  
+    QUnit.module('add', function() {
+      QUnit.test('DrumMachineModel__setup__makesRows', function(assert) {
+        // arrange
+        var drumMachineModel = new DrumMachineModel();        
+        
+        // act
+        drumMachineModel.setup();
+        
+        // assert
+        console.log(drumMachineModel);
+        assert.ok(drumMachineModel.rows.length > 0)
+      });
+
+      QUnit.test('DrumMachineModel__setup__makesCells', function(assert) {
+        // arrange
+        var drumMachineModel = new DrumMachineModel();        
+        
+        // act
+        drumMachineModel.setup();        
+
+        // assert
+        console.log(drumMachineModel);
+        assert.ok(drumMachineModel.rows[0].cells.length > 0)
+      });
+
+
+    });
+  </script>  
+</body>
