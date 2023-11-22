@@ -78,8 +78,6 @@ class DrumMachineModel
 				currentCell.value = 0;
 			}
         }  	
-
-		onDumpModel();	
 	}
 
 	getTotalTicks()
