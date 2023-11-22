@@ -35,6 +35,14 @@
         assert.ok(drumMachineModel.rows[0].cells.length > 0)
       });
 
+      QUnit.test('DrumMachineModel__getMSFromBPM', function(assert) {
+        // arrange
+        var drumMachineModel = new DrumMachineModel();        
+        var bpm = 120;
+		var output = drumMachineModel.getMSFromBPM(bpm)
+        // act
+        assert.ok(output > 0)
+      });
 
     });
   </script>  
