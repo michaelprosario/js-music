@@ -9,7 +9,6 @@ TOM2 = 43
 TOM3 = 45
 TOM4 = 47
 
-
 class DrumMachineCell
 {
     tick = 0;
@@ -24,6 +23,8 @@ class DrumMachineRow
 {
     cells = [];
     instrumentNumber =0;
+	patchNumber = 0;
+	instrumentName = 0;
 }
 
 class DrumMachineModel
@@ -40,22 +41,31 @@ class DrumMachineModel
     setup()
     {
         this.rows = [];
-        for(let i=0;  i<this.instrumentCount; i++)
-        {
-            let row = new DrumMachineRow();
-            row.instrumentNumber = i;
-            this.rows.push(row);
-
-            this.totalTicks = this.getTotalTicks();
-            for(let t=0; t < this.totalTicks; t++)
-            {
-                let cell = new DrumMachineCell();
-                cell.tick = t;
-                cell.cellSize = cellSize;
-                row.cells.push(cell);
-            }
-        }
+        this.setupInstrumentRow(0, "Bass", 42);
+        this.setupInstrumentRow(1, "Snare", 42);
+        this.setupInstrumentRow(2, "HighHat", 42);
+        this.setupInstrumentRow(3, "Tom1", 42);
+        this.setupInstrumentRow(4, "Tom2", 42);
+        this.setupInstrumentRow(5, "Tom3", 42);
+        this.setupInstrumentRow(6, "Tom4", 42);
     }
+
+	setupInstrumentRow(rowNumber, instrumentName, patchNumber) 
+	{
+		let row = new DrumMachineRow();
+		row.instrumentNumber = rowNumber;
+		row.patchNumber = patchNumber;
+		row.instrumentName = instrumentName;
+		this.rows.push(row);
+
+		this.totalTicks = this.getTotalTicks();
+		for (let t = 0; t < this.totalTicks; t++) {
+			let cell = new DrumMachineCell();
+			cell.tick = t;
+			cell.cellSize = cellSize;
+			row.cells.push(cell);
+		}
+	}
 
 	clearRows(){
         for(let row=0;  row<drumGridModel.instrumentCount; row++)
