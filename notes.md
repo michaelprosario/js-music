@@ -13,10 +13,11 @@
 - find cooler way to trigger tick other than set timeout
 - how do we store the drum pattern model?
 - how do we load the drum pattern model?
-- how do we label rows?
+x- how do we label rows?
 - add pattern 1 per row
 - add pattern 2 per row
 - add pattern 3 per row
+- rnd row
 - visualize current tick!!
 
 

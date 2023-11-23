@@ -1,13 +1,15 @@
 let cellSize = 50;
 let instrumentCount = 7;
-MAX_VELOCITY = 127;
-BASS_DRUM = 36
-SNARE_DRUM = 38
-HIGH_HAT = 42
-TOM1 = 41
-TOM2 = 43
-TOM3 = 45
-TOM4 = 47
+
+let MAX_VELOCITY = 127;
+
+let BASS_DRUM = 36
+let SNARE_DRUM = 38
+let HIGH_HAT = 42
+let TOM1 = 41
+let TOM2 = 43
+let TOM3 = 45
+let TOM4 = 47
 
 class DrumMachineCell
 {
@@ -25,6 +27,86 @@ class DrumMachineRow
     instrumentNumber =0;
 	patchNumber = 0;
 	instrumentName = 0;
+
+	clearRow(totalTicks)
+	{
+		let drumRow = this;
+		for(let tick=0; tick<totalTicks;  tick++)
+		{
+			let currentCell = drumRow.cells[tick];
+			currentCell.value = 0;
+		}
+	}
+
+	pattern1(totalTicks)
+	{
+		let drumRow = this;
+		for(let tick=0; tick<totalTicks;  tick++)
+		{
+			let currentCell = drumRow.cells[tick];
+			if(tick % 4 === 0)
+			{
+				currentCell.value = MAX_VELOCITY;
+			}else{
+				currentCell.value = 0;
+			}
+			
+		}
+	}
+
+	pattern2(totalTicks)
+	{
+		let drumRow = this;
+		for(let tick=0; tick<totalTicks;  tick++)
+		{
+			let currentCell = drumRow.cells[tick];
+			if(tick % 8 === 4)
+			{
+				currentCell.value = MAX_VELOCITY;
+			}else{
+				currentCell.value = 0;
+			}
+			
+		}
+	}
+
+	pattern3(totalTicks)
+	{
+		let drumRow = this;
+		for(let tick=0; tick<totalTicks;  tick++)
+		{
+			let currentCell = drumRow.cells[tick];
+			if(tick % 2 === 0)
+			{
+				currentCell.value = MAX_VELOCITY;
+			}else{
+				currentCell.value = 0;
+			}
+			
+		}
+	}
+
+	randomPattern(totalTicks)
+	{
+		
+		let drumRow = this;
+		for(let tick=0; tick<totalTicks;  tick++)
+		{
+			let currentCell = drumRow.cells[tick];
+
+			let r = Math.random();
+			
+			if(r < 0.2)
+			{
+				currentCell.value = MAX_VELOCITY;
+			}else{
+				currentCell.value = 0;
+			}
+			
+		}
+	}
+	
+
 }
 
 class DrumMachineModel
@@ -50,7 +132,7 @@ class DrumMachineModel
         this.setupInstrumentRow(6, "Tom4", TOM4);
     }
 
-	setupInstrumentRow(rowNumber, instrumentName, patchNumber) 
+	setupInstrumentRow(rowNumber, instrumentName, patchNumber)
 	{
 		let row = new DrumMachineRow();
 		row.instrumentNumber = rowNumber;
@@ -67,16 +149,13 @@ class DrumMachineModel
 		}
 	}
 
-	clearRows(){
+	clearRows()
+	{
         for(let row=0;  row<drumGridModel.instrumentCount; row++)
         {
             let drumRow = drumGridModel.rows[row];
-            let totalTicks = this.getTotalTicks();
-			for(let tick=0; tick<totalTicks;  tick++)
-			{
-				let currentCell = drumRow.cells[tick];
-				currentCell.value = 0;
-			}
+			let totalTicks = this.getTotalTicks();
+			drumRow.clearRow(totalTicks);
         }  	
 	}
 
@@ -244,13 +323,14 @@ class DrumGridView
 			for(let tick=0; tick<totalTicks;  tick++)
 			{
 				let currentCell = drumRow.cells[tick];
+				let element = currentCell.parentElement;
 				if(currentCell.value > 0)
 				{
-					currentCell.parentElement.setAttribute("fill", "yellow");
+					element.className = 'spnTrackCell spnCellSelected';						
 				}
 				else
 				{
-					currentCell.parentElement.setAttribute("fill", "blue");
+					element.className = 'spnTrackCell spnCellNotSelected';																
 				}
 			}
         }  
@@ -258,9 +338,18 @@ class DrumGridView
 
     makeGridRow(drumRow, rowIndex, divRowsContainers) {
 		var divRow = document.createElement("div");
+		divRow.drumRow = drumRow;
 		var divLeft = document.createElement("div");
-		divLeft.innerHTML = `${drumRow.instrumentName}`;
+		divLeft.drumRow = drumRow;
+		divLeft.innerHTML = `
+		${drumRow.instrumentName}
+		<button onclick='onRowClear(this)'>Clear</button>
+		<button onclick='onPattern1(this)'>1</button>
+		<button onclick='onPattern2(this)'>2</button>
+		<button onclick='onPattern3(this)'>3</button>
+		<button onclick='onRandomPattern(this)'>Rnd</button>
 
+		`;
 		divRow.appendChild(divLeft);
         for (let cell = 0; cell < this.drumGridModel.totalTicks; cell++) 
 		{
@@ -278,19 +367,21 @@ class DrumGridView
 		divCell.drumCell.parentElement = divCell;
         divCell.onclick = function(ev)
         {
-            if(ev.srcElement.drumCell.value === 0)
+			let element = ev.srcElement;
+            if(element.drumCell.value === 0)
             {
-                ev.srcElement.drumCell.value = MAX_VELOCITY;
-				ev.srcElement.className = 'spnTrackCell spnCellSelected';
-            }
+				element.drumCell.value = MAX_VELOCITY;
+				element.className = 'spnTrackCell spnCellSelected';		
+			}
             else
             {
-                ev.srcElement.drumCell.value = 0;
-				ev.srcElement.className = 'spnTrackCell spnCellNotSelected';
-            }
+				element.drumCell.value = 0;
+				element.className = 'spnTrackCell spnCellNotSelected';
+			}
         }
         divRow.appendChild(divCell);
     }
+
 }
 
 function onDumpModel()
@@ -323,3 +414,39 @@ function playSnareDrum()
 {
 	port.noteOn(9, SNARE_DRUM, MAX_VELOCITY);
 }
+
+function onRowClear(srcElement)
+{
+	let totalTicks = drumGridModel.getTotalTicks();
+	srcElement.parentElement.drumRow.clearRow(totalTicks);
+	drumGridView.updateView();
+}
+
+function onPattern1(srcElement)
+{
+	let totalTicks = drumGridModel.getTotalTicks();
+	srcElement.parentElement.drumRow.pattern1(totalTicks);
+	drumGridView.updateView();
+}
+
+function onPattern2(srcElement)
+{
+	let totalTicks = drumGridModel.getTotalTicks();
+	srcElement.parentElement.drumRow.pattern2(totalTicks);
+	drumGridView.updateView();
+}
+
+function onPattern3(srcElement)
+{
+	let totalTicks = drumGridModel.getTotalTicks();
+	srcElement.parentElement.drumRow.pattern3(totalTicks);
+	drumGridView.updateView();
+}
+
+function onRandomPattern(srcElement)
+{
+	let totalTicks = drumGridModel.getTotalTicks();
+	srcElement.parentElement.drumRow.randomPattern(totalTicks);
+	drumGridView.updateView();
+}
+
