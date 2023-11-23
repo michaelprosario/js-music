@@ -14,10 +14,10 @@
 - how do we store the drum pattern model?
 - how do we load the drum pattern model?
 x- how do we label rows?
-- add pattern 1 per row
-- add pattern 2 per row
-- add pattern 3 per row
-- rnd row
+x- add pattern 1 per row
+x- add pattern 2 per row
+x- add pattern 3 per row
+x- rnd row
 - visualize current tick!!
 
 
