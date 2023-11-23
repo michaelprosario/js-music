@@ -1,6 +1,6 @@
 let cellSize = 50;
 let instrumentCount = 7;
-
+MAX_VELOCITY = 127;
 BASS_DRUM = 36
 SNARE_DRUM = 38
 HIGH_HAT = 42
@@ -41,13 +41,13 @@ class DrumMachineModel
     setup()
     {
         this.rows = [];
-        this.setupInstrumentRow(0, "Bass", 42);
-        this.setupInstrumentRow(1, "Snare", 42);
-        this.setupInstrumentRow(2, "HighHat", 42);
-        this.setupInstrumentRow(3, "Tom1", 42);
-        this.setupInstrumentRow(4, "Tom2", 42);
-        this.setupInstrumentRow(5, "Tom3", 42);
-        this.setupInstrumentRow(6, "Tom4", 42);
+        this.setupInstrumentRow(0, "Bass", BASS_DRUM);
+        this.setupInstrumentRow(1, "Snare", SNARE_DRUM);
+        this.setupInstrumentRow(2, "HighHat", HIGH_HAT);
+        this.setupInstrumentRow(3, "Tom1", TOM1);
+        this.setupInstrumentRow(4, "Tom2", TOM2);
+        this.setupInstrumentRow(5, "Tom3", TOM3);
+        this.setupInstrumentRow(6, "Tom4", TOM4);
     }
 
 	setupInstrumentRow(rowNumber, instrumentName, patchNumber) 
@@ -129,6 +129,11 @@ class DrumGridView
 	currentTick = 0;
     constructor(drumGridModel)
     {
+		if(!drumGridModel)
+		{
+			throw new Error("drumGridModel is not defined");
+		}
+
         this.drumGridModel = drumGridModel;
     }
 
@@ -148,13 +153,13 @@ class DrumGridView
 	{
 
 		switch(intInstrument){
-			case 0: port.noteOn(9, BASS_DRUM, 127); break;
-			case 1: port.noteOn(9, SNARE_DRUM, 127); break;
-			case 2: port.noteOn(9, HIGH_HAT, 127); break;
-			case 3: port.noteOn(9, TOM1, 127); break;
-			case 4: port.noteOn(9, TOM2, 127); break;
-			case 5: port.noteOn(9, TOM3, 127); break;
-			case 6: port.noteOn(9, TOM4, 127); break;
+			case 0: port.noteOn(9, BASS_DRUM, velocity); break;
+			case 1: port.noteOn(9, SNARE_DRUM, velocity); break;
+			case 2: port.noteOn(9, HIGH_HAT, velocity); break;
+			case 3: port.noteOn(9, TOM1, velocity); break;
+			case 4: port.noteOn(9, TOM2, velocity); break;
+			case 5: port.noteOn(9, TOM3, velocity); break;
+			case 6: port.noteOn(9, TOM4, velocity); break;
 		}
 
 	}
@@ -218,19 +223,15 @@ class DrumGridView
 
     render()
     {
-        const svgNS = "http://www.w3.org/2000/svg";
-        const svg = document.createElementNS(svgNS, "svg");
-        svg.setAttribute("width", this.drumGridModel.totalTicks * cellSize);
-        svg.setAttribute("height", "400");
-                
-        for(let row=0;  row<this.drumGridModel.instrumentCount; row++)
+		var divRowsContainers = document.createElement("div");
+        for(let rowIndex=0;  rowIndex<this.drumGridModel.instrumentCount; rowIndex++)
         {
-            let drumRow = this.drumGridModel.rows[row];
-            this.makeGridRow(drumRow, row, svgNS, svg);
+            let drumRow = this.drumGridModel.rows[rowIndex];
+            this.makeGridRow(drumRow, rowIndex, divRowsContainers);
         }  
 
         let divDrumGrid = document.getElementById("divDrumGrid");
-        divDrumGrid.appendChild(svg);
+        divDrumGrid.appendChild(divRowsContainers);
     }
 
 	updateView()
@@ -255,39 +256,40 @@ class DrumGridView
         }  
 	}
 
-    makeGridRow(drumRow, row, svgNS, svg) {
-        for (let cell = 0; cell < this.drumGridModel.totalTicks; cell++) {
-            let drumCell = drumRow.cells[cell];
-            drumCell.x = cell * cellSize;
-            drumCell.y = row * cellSize;
+    makeGridRow(drumRow, rowIndex, divRowsContainers) {
+		var divRow = document.createElement("div");
+		var divLeft = document.createElement("div");
+		divLeft.innerHTML = `${drumRow.instrumentName}`;
 
-            this.makeCell(svgNS, drumCell, svg);
+		divRow.appendChild(divLeft);
+        for (let cell = 0; cell < this.drumGridModel.totalTicks; cell++) 
+		{
+            let drumCell = drumRow.cells[cell];
+            this.makeCell(drumCell, divRow);
         }
+
+		divRowsContainers.appendChild(divRow);
     }
 
-    makeCell(svgNS, drumCell, svg) {
-        const rect = document.createElementNS(svgNS, "rect");
-        rect.setAttribute("x", drumCell.x);
-        rect.setAttribute("y", drumCell.y);
-        rect.setAttribute("width", drumCell.cellSize-2);
-        rect.setAttribute("height", drumCell.cellSize-2);
-        rect.setAttribute("fill", "blue");
-        rect.drumCell = drumCell;
-		rect.drumCell.parentElement = rect;
-        rect.onclick = function(ev)
+    makeCell(drumCell,divRow) {
+        const divCell = document.createElement("span");
+        divCell.drumCell = drumCell;
+		divCell.className = "spnTrackCell spnCellNotSelected";
+		divCell.drumCell.parentElement = divCell;
+        divCell.onclick = function(ev)
         {
             if(ev.srcElement.drumCell.value === 0)
             {
-                ev.srcElement.drumCell.value = 255;
-                rect.setAttribute("fill", "yellow");
+                ev.srcElement.drumCell.value = MAX_VELOCITY;
+				ev.srcElement.className = 'spnTrackCell spnCellSelected';
             }
             else
             {
                 ev.srcElement.drumCell.value = 0;
-                rect.setAttribute("fill", "blue");
+				ev.srcElement.className = 'spnTrackCell spnCellNotSelected';
             }
         }
-        svg.appendChild(rect);
+        divRow.appendChild(divCell);
     }
 }
 
@@ -314,10 +316,10 @@ function bodyOnLoad()
 
 function playBassDrum()
 {
-	port.noteOn(9, BASS_DRUM, 127);
+	port.noteOn(9, BASS_DRUM, MAX_VELOCITY);
 }
 
 function playSnareDrum()
 {
-	port.noteOn(9, SNARE_DRUM, 127);
+	port.noteOn(9, SNARE_DRUM, MAX_VELOCITY);
 }
