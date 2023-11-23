@@ -247,6 +247,8 @@ class DrumGridView
 	{
 		// handle tick work ...
 
+		this.visualizeTickRow();
+
 		for(let instrument=0; instrument<instrumentCount;  instrument++){
 			let cellValue = this.drumGridModel.getInstrumentRowValue(instrument, this.currentTick);
 			if(cellValue > 0)
@@ -265,12 +267,36 @@ class DrumGridView
 		}
 	}
 
+	visualizeTickRow() {
+		const divTickVizRow = document.getElementById("divTickVizRow");
+		for (let tick = 0; tick < this.drumGridModel.getTotalTicks(); tick++) {
+			if (tick === this.currentTick) {
+				divTickVizRow.children[tick].className = "spnTickActive";
+			} else {
+				divTickVizRow.children[tick].className = "spnTick";
+			}
+		}
+	}
+
 	onTick()
 	{
 		var txtTempo = document.getElementById("txtTempo");
-		var bpm = parseInt(txtTempo.value)
-		this.drumGridModel.bpm = bpm;
-		this.timerInterval = this.drumGridModel.getMSFromBPM(bpm);
+		try
+		{
+			var bpm = parseInt(txtTempo.value)
+
+			if(bpm < 50)
+			{
+				bpm = 100;
+			}
+			this.drumGridModel.bpm = bpm;
+			this.timerInterval = this.drumGridModel.getMSFromBPM(bpm);
+		}
+		catch(e)
+		{
+			this.drumGridModel.bpm = 100;
+			this.timerInterval = this.drumGridModel.getMSFromBPM(this.drumGridModel.bpm);
+		}
 
 		if(this.isPlaying)
 		{
@@ -309,8 +335,12 @@ class DrumGridView
             this.makeGridRow(drumRow, rowIndex, divRowsContainers);
         }  
 
+		// make tick visualization row ..
+		let divTickVizRow = this.makeTickVisualizationRow();
+
         let divDrumGrid = document.getElementById("divDrumGrid");
-        divDrumGrid.appendChild(divRowsContainers);
+        divDrumGrid.appendChild(divTickVizRow);
+		divDrumGrid.appendChild(divRowsContainers);
     }
 
 	updateView()
@@ -334,6 +364,20 @@ class DrumGridView
 				}
 			}
         }  
+	}
+
+	makeTickVisualizationRow(){
+		var divRow = document.createElement("div");
+		divRow.setAttribute("id", "divTickVizRow");
+
+        for (let cell = 0; cell < this.drumGridModel.totalTicks; cell++) 
+		{
+			const spnTick = document.createElement("span");
+			spnTick.className = "spnTick";
+			divRow.appendChild(spnTick);
+        }
+
+		return divRow;
 	}
 
     makeGridRow(drumRow, rowIndex, divRowsContainers) {
