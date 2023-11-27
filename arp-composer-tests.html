@@ -1,0 +1,107 @@
+<meta charset="utf-8">
+<title>Test Suite</title>
+<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.20.0.css">
+
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="https://code.jquery.com/qunit/qunit-2.20.0.js"></script>
+  <script src="arp-composer.js"></script>
+
+  <script>
+  
+	QUnit.test('ChordSequence__getChordTicksSchedule___ValidDataTest', function(assert) {
+		// arrange
+		let chordSequence = new ChordSequence();
+
+		let chord1 = new ChordChange();
+		chord1.chordSymbol = "G";
+		
+		let chord2 = new ChordChange();
+		chord2.chordSymbol = "C";
+		chord2.beatCount = 2;
+
+		let chord3 = new ChordChange();
+		chord3.chordSymbol = "D";
+		chord3.beatCount = 2;
+
+		let chord4 = new ChordChange();
+		chord4.chordSymbol = "G";
+
+		chordSequence.chords = [chord1, chord2, chord3, chord4];
+
+		// act
+		const response = chordSequence.getChordTickSchedule();
+		console.log(chordSequence.chords);
+
+		// assert
+		assert.ok(response.length > 0)
+	});
+
+	QUnit.test('ChordSequence__getChordTicksSchedule___HandleNoChords', function(assert) {
+		// arrange
+		let chordSequence = new ChordSequence();
+
+		// act
+		const response = chordSequence.getChordTickSchedule();
+
+		// assert
+		assert.ok(response.length === 0)
+	});
+
+	QUnit.test('ChordSequence__getTotalBeats', function(assert) {
+		// arrange
+		let chordSequence = new ChordSequence();
+		let chord1 = new ChordChange();
+		chord1.chordSymbol = "G";
+		
+		let chord2 = new ChordChange();
+		chord2.chordSymbol = "C";
+		chord2.beatCount = 2;
+
+		let chord3 = new ChordChange();
+		chord3.chordSymbol = "D";
+		chord3.beatCount = 2;
+
+		let chord4 = new ChordChange();
+		chord4.chordSymbol = "G";
+
+		chordSequence.chords = [chord1, chord2, chord3, chord4];
+
+		// act
+		const response = chordSequence.getTotalBeats();
+
+		// assert
+		assert.ok(response > 0)
+	});
+
+	QUnit.test('ChordSequence__parse', function(assert) {
+		// arrange
+		let chordSequence = new ChordSequence();
+
+		// act
+		const response = chordSequence.parse("C Am F G");
+
+		// assert
+		assert.ok(response)
+		assert.ok(chordSequence.chords.length === 4)
+	});
+
+	QUnit.test('ChordSequence__parse__handleChordLength', function(assert) {
+		// arrange
+		let chordSequence = new ChordSequence();
+
+		// act
+		const response = chordSequence.parse("C:2 Am:2 F G");
+
+		// assert
+		assert.ok(response)
+		assert.ok(chordSequence.chords[0].beatCount === 2)
+		assert.ok(chordSequence.chords[1].beatCount === 2)
+		assert.ok(chordSequence.chords[2].beatCount === 4)
+		assert.ok(chordSequence.chords[3].beatCount === 4)
+
+	});
+
+  </script>  
+</body>

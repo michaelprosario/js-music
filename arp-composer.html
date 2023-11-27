@@ -1,0 +1,30 @@
+<html>
+
+<head>
+  <title>JS Arp Composer</title>
+  <script src="JZZ.js"></script>
+  <script src="arp-composer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tonal/browser/tonal.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jzz-synth-tiny"></script>
+  
+  <link rel="stylesheet" href="arp-composer.css">
+</head>
+
+<body onload="bodyOnLoad()">
+  <h3>JS Arp Composer</h3>
+  <button onclick="onPlay()" id="btnPlay">Play</button>
+  <button onclick="onStop()" id="btnStop">Stop</button>
+  <button onclick="onClear()" id="btnClear">Clear</button>
+
+
+
+  Tempo:
+  <input type="text" id="txtTempo" value="120">
+
+  Chord Progression:
+  <input type="text" id="txtChordProgression" value="G Em C D">
+  <div id="divGrid"></div>
+
+</body>
+
+</html>
