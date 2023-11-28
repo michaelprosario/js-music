@@ -333,9 +333,9 @@ class ArpGridView {
 		const divTickVizRow = document.getElementById("divTickVizRow");
 		for (let tick = 0; tick < this.arpGridModel.getTotalTicks(); tick++) {
 			if (tick === this.currentTick) {
-				divTickVizRow.children[tick].className = "spnTickActive";
+				divTickVizRow.children[1].children[tick].className = "spnTickActive";
 			} else {
-				divTickVizRow.children[tick].className = "spnTick";
+				divTickVizRow.children[1].children[tick].className = "spnTick";
 			}
 		}
 	}
@@ -416,21 +416,34 @@ class ArpGridView {
 
 	makeTickVisualizationRow() {
 		var divRow = document.createElement("div");
+		divRow.className = "row"
 		divRow.setAttribute("id", "divTickVizRow");
+
+		var divLeft = document.createElement("divLeft");
+		divLeft.className = "col-3"
+		divRow.appendChild(divLeft)
+
+		var divRight = document.createElement("divLeft");
+		divRight.className = "col-5"
 
 		for (let cell = 0; cell < this.arpGridModel.totalTicks; cell++) {
 			const spnTick = document.createElement("span");
 			spnTick.className = "spnTick";
-			divRow.appendChild(spnTick);
+			divRight.appendChild(spnTick);
 		}
+
+		divRow.appendChild(divRight)
 
 		return divRow;
 	}
 
 	makeGridRow(arpRow, rowIndex, divRowsContainers) {
 		var divRow = document.createElement("div");
+		divRow.className = "row"
 		divRow.arpRow = arpRow;
+
 		var divLeft = document.createElement("div");
+		divLeft.className = "col-3";
 		divLeft.arpRow = arpRow;
 		divLeft.innerHTML = `
 		${arpRow.instrumentName}
@@ -440,10 +453,14 @@ class ArpGridView {
 		<button onclick='onRandomPattern(this)'>Rnd</button>
 		`;
 		divRow.appendChild(divLeft);
+
+		var divRight = document.createElement("div");
+		divRight.className = "col-5";
 		for (let cell = 0; cell < this.arpGridModel.totalTicks; cell++) {
 			let arpCell = arpRow.cells[cell];
-			this.makeCell(arpCell, divRow);
+			this.makeCell(arpCell, divRight);
 		}
+		divRow.appendChild(divRight);
 
 		divRowsContainers.appendChild(divRow);
 	}
