@@ -238,6 +238,14 @@ class ArpGridView {
 	}
 
 	onPlay() {
+
+		let txtInstrument = document.getElementById("txtInstrument");
+		var synth = JZZ.synth.Tiny();
+		var s1 = synth.getSynth(parseInt(txtInstrument.value));
+		synth.setSynth(0, s1);
+		port = synth;
+	
+
 		this.currentTick = 0;
 		this.currentChordTick = 0;
 		this.isPlaying = true;
@@ -505,16 +513,6 @@ function bodyOnLoad() {
 	arpGridView.render();
 	arpGridView.start();
 
-	// setup synth
-
-	var synth = JZZ.synth.Tiny();
-	var s1 = synth.getSynth(1);
-	synth.setSynth(0, s1);
-
-	//JZZ.synth.Tiny.register('Web Audio');
-
-	//port = JZZ().openMidiOut('Web Audio');
-	port = synth;
 }
 
 function onRowClear(srcElement) {

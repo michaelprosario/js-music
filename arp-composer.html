@@ -6,7 +6,7 @@
   <script src="arp-composer.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tonal/browser/tonal.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jzz-synth-tiny"></script>
-  
+
   <link rel="stylesheet" href="arp-composer.css">
 </head>
 
@@ -16,13 +16,18 @@
   <button onclick="onStop()" id="btnStop">Stop</button>
   <button onclick="onClear()" id="btnClear">Clear</button>
 
+  <ul>
+    <li>
+      Tempo:<input type="text" id="txtTempo" value="120">
+    </li>
+    <li>
+      Chord Progression: <input type="text" id="txtChordProgression" value="G Em C D">
+    </li>
+    <li>
+      Instrument: <input type="text" id="txtInstrument" value="12">
+    </li>
+  </ul>
 
-
-  Tempo:
-  <input type="text" id="txtTempo" value="120">
-
-  Chord Progression:
-  <input type="text" id="txtChordProgression" value="G Em C D">
   <div id="divGrid"></div>
 
 </body>
